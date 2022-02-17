@@ -1,6 +1,6 @@
 ---
 title: "Informe Hoja de trabajo 2"
-author: "Marco Ramirez 195888, Alfredo Quezada, Estuardo Hernandez"
+author: "Marco Ramirez 195888, Alfredo Quezada 191002 , Estuardo Hernandez 19202"
 date: "16/2/2022"
 output: html_document
 ---
@@ -218,8 +218,7 @@ Como se observa en la gráfica, la que obtuvo mejores resultados fue Cluster jer
 
 ```{r}
 table(datos$genres,datos$grupo)
-table(datos$genres, datos$gruposHC)
-table(datos$genres, datos$mxGau)
+
 ```
 
-Con la información de las tablas anteriores, se puede determinar que
+Con la información de las tablas anteriores, se puede determinar con mayor facilidad la coleccion de datos, ya que tenemos el resumen de la cantidad de veces que se repite un elemento, esto es muy importante sobre todo cuando hablamos de variables categoricas, entonces a base del clustering de las variables numericas, nos facilita la organizacion y obtencion de informacion de las variables categoricas
