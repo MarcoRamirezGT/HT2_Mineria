@@ -1,0 +1,51 @@
+---
+title: "Informe"
+author: "Marco Ramirez"
+date: "16/2/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+
+```
+```{r wid}
+
+library(cluster) #Para calcular la silueta
+library(e1071)#para cmeans
+library(mclust) #mixtures of gaussians
+library(fpc) #para hacer el plotcluster
+library(NbClust) #Para determinar el número de clusters óptimo
+library(factoextra) #Para hacer gráficos bonitos de clustering
+library(hopkins) #Para revisar si vale la pena hacer agrupamiento
+library(GGally) #Para hacer el conjunto de graficos
+library(FeatureImpCluster) #Para revisar la importancia de las variables en los grupos.
+library(pheatmap) #Para hacer mapa de calor
+
+datos<-read.csv("movies.csv")
+
+#Normalizar datos
+datos2<-datos[complete.cases(datos),]
+
+#Seleccionar variables a trabajar
+popularidad<-datos2[,'popularity']
+presupuesto<-datos2[,'budget']
+ingresos<-datos2[,'revenue']
+duracion<-datos2[,'runtime']
+votos<-datos2[,'voteCount']
+#Creamos el dataframe con los datos a utilizar
+datosCluster<-data.frame(popularidad,presupuesto,ingresos,duracion,votos)
+#Estadistico de hopkins
+hopkins(datosCluster)
+#VAT
+datos_dist<- dist(datosCluster)
+
+```
+
+
+```{r}
+knitr::opts_chunk$set(fig.width=12, fig.height=8) 
+fviz_dist(datos_dist, show_labels = F)
+
+```
