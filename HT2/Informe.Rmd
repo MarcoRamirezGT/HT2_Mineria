@@ -13,7 +13,6 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r wid}
 
 library(cluster) #Para calcular la silueta
-library(e1071)#para cmeans
 library(mclust) #mixtures of gaussians
 library(fpc) #para hacer el plotcluster
 library(NbClust) #Para determinar el número de clusters óptimo
@@ -33,19 +32,71 @@ popularidad<-datos2[,'popularity']
 presupuesto<-datos2[,'budget']
 ingresos<-datos2[,'revenue']
 duracion<-datos2[,'runtime']
-votos<-datos2[,'voteCount']
-#Creamos el dataframe con los datos a utilizar
-datosCluster<-data.frame(popularidad,presupuesto,ingresos,duracion,votos)
-#Estadistico de hopkins
-hopkins(datosCluster)
-#VAT
-datos_dist<- dist(datosCluster)
+conteoVotos<-datos2[,'voteCount']
+cle<-data.frame(popularidad,presupuesto,ingresos,duracion,conteoVotos)
+#cle <- datos[c("popularity","budget","revenue","runtime","voteCount")]
+clusteringVar<-scale(cle)
 
 ```
 
+# Hoja de Trabajo: 2, Clustering
+
+
+### 2. Analice la tendencia al agrupamiento usando el estadístico de Hopkings y la VAT (Visual Assessment 
+of cluster Tendency) Discuta sus resultados e impresiones. 
+
+```{r} 
+
+hopkins(clusteringVar)
+
+#Matriz de distancia
+datos_dist<- dist(clusteringVar)
+
+```
+Como se puede ver, el valor del estadistico de Hopkins tiene un valor muy lejano a 0.5, por lo que no son datos aleatorios, lo que nos podria facilitar un agrupamiento.  
+
+Ahora, usando un metodo grafico, si nos basamos en la grafica siguiente: 
 
 ```{r}
 knitr::opts_chunk$set(fig.width=12, fig.height=8) 
 fviz_dist(datos_dist, show_labels = F)
 
 ```
+
+Como se puede observar en la VAT, existen patrones, algunos definidos, por lo que se ratifica que el dato que arroja el estadistico de Hopkins, es correcto.
+
+
+
+
+### 3. Determine cuál es el número de grupos a formar más adecuado para los datos que está trabajando. 
+Haga una gráfica de codo y explique la razón de la elección de la cantidad de clústeres con la que 
+trabajará.
+
+
+``` {r}
+#Metodo de codo
+wss=0
+for (i in 1:10) 
+  wss[i] <- sum(kmeans(cle, centers=i)$withinss)
+
+plot(1:10, wss, type="b", xlab="Number of Clusters",  ylab="Within groups sum of squares")
+
+
+```
+Basandonos en el metodo de codo, el numero perfecto para trabajar es de 3, ya que, siguiendo la teoria del metodo, el punto de inflexion es igual a 3.  
+
+
+
+```{r}
+
+#Metodo de silueta
+fviz_nbclust(clusteringVar, kmeans, method = "silhouette") +
+  labs(subtitle = "Silhouette method")
+
+```
+Al igual que el metodo del codo, el numero de clusters ideal es de 3, pero para este metodo, se tomo en cuenta el numero de agrupaciones que tenga una silueta mas elevada. 
+
+
+
+
+
