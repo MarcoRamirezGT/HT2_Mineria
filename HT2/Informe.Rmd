@@ -199,7 +199,7 @@ Gráficamente se vería de la siguiente manera:
 plot(silmg, cex.names=.4, col=1:3, border = NA)
 ```
 
-#### 5.Determine la calidad del agrupamiento hecho por cada algoritmo con el método de la silueta. Discuta los resultados. 
+#### 5. Determine la calidad del agrupamiento hecho por cada algoritmo con el método de la silueta. Discuta los resultados. 
 
 ```{r}
 df <- data.frame(algoritmo=c("K-mean", "Jerarquico", "Gaussiano"),
@@ -213,3 +213,13 @@ p
 ```
 
 Como se observa en la gráfica, la que obtuvo mejores resultados fue Cluster jerárquico, con un resultado de `r Jerarquico`, podríamos decir que el Agrupamiento Jerárquico fue el mejor, ya que este cuenta con la ventaja de que cualquier medida de distancia puede ser usada, dicho sea de paso, nosotros utilizamos la matriz de distancia, por eso es que hace que se vuelva tan eficiente en comparación a los otros métodos.
+
+#### 6. Interprete los grupos basado en el conocimiento que tiene de los datos. Recuerde investigar las medidas de tendencia central de las variables continuas y las tablas de frecuencia de las variables categóricas pertenecientes a cada grupo. Identifique hallazgos interesantes debido a las agrupaciones y describa para qué le podría servir.
+
+```{r}
+table(datos$genres,datos$grupo)
+table(datos$genres, datos$gruposHC)
+table(datos$genres, datos$mxGau)
+```
+
+Con la información de las tablas anteriores, se puede determinar que
