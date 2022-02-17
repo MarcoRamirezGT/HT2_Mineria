@@ -1,15 +1,21 @@
 ---
 title: "Informe"
-author: "Marco Ramirez"
+author: "Marco Ramirez, Alfredo Quezada, Javier Hernández"
 date: "16/2/2022"
 output: html_document
 ---
+
+# Hoja de Trabajo: 2, Clustering
+### 1. Haga el procesamiento del dataset, explique qué variables no aportan información a la generación de grupos y por qué. Describa con qué variables calculará los grupos.
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
 
 ```
+
+# Librerías a utilizar.
+
 ```{r wid}
 
 library(cluster) #Para calcular la silueta
@@ -21,12 +27,18 @@ library(hopkins) #Para revisar si vale la pena hacer agrupamiento
 library(GGally) #Para hacer el conjunto de graficos
 library(FeatureImpCluster) #Para revisar la importancia de las variables en los grupos.
 library(pheatmap) #Para hacer mapa de calor
-
+```
+# Preporcesamiento.
+```{r wid}
 datos<-read.csv("movies.csv")
-
+```
+# Normalizar los datos.
+```{r wid}
 #Normalizar datos
 datos2<-datos[complete.cases(datos),]
-
+```
+# Variables a usar para el agrupamiento.
+```{r wid}
 #Seleccionar variables a trabajar
 popularidad<-datos2[,'popularity']
 presupuesto<-datos2[,'budget']
@@ -38,9 +50,9 @@ cle<-data.frame(popularidad,presupuesto,ingresos,duracion,conteoVotos)
 clusteringVar<-scale(cle)
 
 ```
+# Las variables que no se usaron para el agrupamiento fueron las variables categóricas porque no son las adecuadas para el análisis. Sin embargo se puede analizar pero usando o tomando como base las numéricas. Para establcer relaciones.<br/>
 
-# Hoja de Trabajo: 2, Clustering
-
+# Se usaron las siguientes variables:<br/> popularity: Que es el índice de popularidad de la película calculado semanalmente.<br/> budget: El presupuesto para la película.<br/> revenue: El ingreso de la película.<br/> runtime: La duración de la película.<br/> voteCount: El número de votos en la plataforma para la película.<br/> 
 
 ### 2. Analice la tendencia al agrupamiento usando el estadístico de Hopkings y la VAT (Visual Assessment 
 of cluster Tendency) Discuta sus resultados e impresiones. 
