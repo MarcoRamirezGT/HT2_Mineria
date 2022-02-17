@@ -212,5 +212,4 @@ p<-ggplot(data=df, aes(x=algoritmo, y=silueta, fill=algoritmo)) +
 p
 ```
 
-
-Como se observa en la grafica la que obtuvo mejores resultados fue Cluster jerarquico, con un resultado de `r Jerarquico`.
+Como se observa en la grafica la que obtuvo mejores resultados fue Cluster jerarquico, con un resultado de `r Jerarquico`, podriamos decir que el Agrupamiento Jerarquico fue el mejor, ya que este cuenta con la ventaja de que cualquier medida de distancia puede ser usada, dicho sea de paso, nosotros utilizamos la matriz de distancia, por eso es que hace que se vuelva tan eficiente en comparacion a los otros metodos. 
