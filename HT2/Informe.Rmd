@@ -14,7 +14,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Hoja de Trabajo: 2, Clustering
 
-### 1. Haga el preprocesamiento del dataset, explique qué variables no aportan información a la generación de grupos y por qué. Describa con qué variables calculará los grupos
+### 1. Haga el preprocesamiento del dataset, explique qué variables no aportan información a la generación de grupos y por qué. Describa con qué variables calculará los grupos.
 ```{r wid}
 
 library(cluster) #Para calcular la silueta
@@ -44,7 +44,7 @@ cle<-data.frame(popularidad,presupuesto,ingresos,duracion,conteoVotos)
 clusteringVar<-scale(cle)
 
 ```
-Las variables que no se usaron para el agrupamiento fueron las variables categóricas porque no son las adecuadas para el análisis. Sin embargo se puede analizar pero usando o tomando como base las numéricas. Para establcer relaciones.<br/>
+Las variables que no se usaron para el agrupamiento fueron las variables categóricas porque no son las adecuadas para el análisis. Sin embargo se puede analizar pero usando o tomando como base las numéricas para establecer relaciones.<br/>
 
 Se usaron las siguientes variables:<br/> popularity: Que es el índice de popularidad de la película calculado semanalmente.<br/> budget: El presupuesto para la película.<br/> revenue: El ingreso de la película.<br/> runtime: La duración de la película.<br/> voteCount: El número de votos en la plataforma para la película.<br/> 
 
@@ -58,9 +58,9 @@ hopkins(clusteringVar)
 datos_dist<- dist(clusteringVar)
 
 ```
-Como se puede ver, el valor del estadistico de Hopkins tiene un valor muy lejano a 0.5, por lo que no son datos aleatorios, lo que nos podria facilitar un agrupamiento.  
+Como se puede ver, el valor del estadístico de Hopkins tiene un valor muy lejano a 0.5, por lo que no son datos aleatorios, lo que nos podría facilitar un agrupamiento.  
 
-Ahora, usando un metodo grafico, si nos basamos en la grafica siguiente: 
+Ahora, usando un método gráfico, si nos basamos en la gráfica siguiente: 
 
 ```{r}
 knitr::opts_chunk$set(fig.width=12, fig.height=8) 
@@ -68,7 +68,7 @@ fviz_dist(datos_dist, show_labels = F)
 
 ```
 
-Como se puede observar en la VAT, existen patrones, algunos definidos, por lo que se ratifica que el dato que arroja el estadistico de Hopkins, es correcto.
+Como se puede observar en la VAT, existen patrones, algunos definidos, por lo que se ratifica que el dato que arroja el estadístico de Hopkins, es correcto.
 
 
 
@@ -88,7 +88,7 @@ plot(1:10, wss, type="b", xlab="Number of Clusters",  ylab="Within groups sum of
 
 
 ```
-Basandonos en el metodo de codo, el numero perfecto para trabajar es de 3, ya que, siguiendo la teoria del metodo, el punto de inflexion es igual a 3.  
+Basándonos en el método de codo, el número perfecto para trabajar es de 3, ya que, siguiendo la teoría del método, el punto de inflexión es igual a 3.  
 
 
 
@@ -99,7 +99,7 @@ fviz_nbclust(clusteringVar, kmeans, method = "silhouette") +
   labs(subtitle = "Silhouette method")
 
 ```
-Al igual que el metodo del codo, el numero de clusters ideal es de 3, pero para este metodo, se tomo en cuenta el numero de agrupaciones que tenga una silueta mas elevada. 
+Al igual que el método del codo, el número de clusters ideal es de 3, pero para este método, se tomó en cuenta el número de agrupaciones que tenga una silueta más elevada. 
 
 ### 4. Utilice 3 algoritmos existentes para agrupamiento. Compare los resultados generados por cada uno. 
 #### K-means
@@ -115,7 +115,7 @@ datos$grupo<-km$cluster
 plotcluster(clusteringVar,km$cluster) 
 ```
 
-Como se observa en la imagen, el primer paso es escoger el numero de grupos K, en este caso fue 3 tal como se justifico anteriormente, posterior a ello se establecen k centroides en el espacio de datos.
+Como se observa en la imagen, el primer paso es escoger el numero de grupos K, en este caso fue 3 tal como se justificó anteriormente, posterior a ello se establecen k centroides en el espacio de datos.
 
 ```{r}
 
@@ -128,7 +128,7 @@ fviz_cluster(km, data = clusteringVar,geom = "point", ellipse.type = "norm")
 ```
 
 
-Luego se asignan los centroides y se reubican
+Luego se asignan los centroides y se reubican.
 ```{r}
 
 silkm<-silhouette(km$cluster,dist(clusteringVar))
@@ -137,7 +137,7 @@ Kmean<-mean(silkm[,3])
 
 ```
 Se obtiene que la silueta de K-means es de `r mean(silkm[,3])` esto indica que tenemos un buen resultado, ya que es muy cercano a 1, siendo un resultado deseable. </br>
-Y el grafico de la silueta de K-means seria la siguiente
+Y el gráfico de la silueta de K-means sería el siguiente:
 ```{r}
 
 plot(silkm, cex.names=.4, col=1:3, border=NA)
@@ -169,9 +169,9 @@ Jerarquico<-mean(silhc[,3])
 
 ```
 
-Como se observa la silueta del algoritmo cluster jerarquico fue de `r mean(silhc[,3])`, indicando que su valor fue muy cercano a 1, siendo un resultado deseable.</br>
+Como se observa la silueta del algoritmo cluster jerárquico fue de `r mean(silhc[,3])`, indicando que su valor fue muy cercano a 1, siendo un resultado deseable.</br>
 
-Graficamente la silueta de este algoritmo seria de la siguiente manera.
+Gráficamente la silueta de este algoritmo sería de la siguiente manera:
 ```{r}
 plot(silhc, cex.names=.4, col=1:3, border = NA)
 ```
@@ -191,9 +191,9 @@ mean(silmg[,3])
 Gaussiano<-mean(silmg[,3]) 
 
 ```
-Como se observa con este algoritmo obtenimos `r mean(silmg[,3])` de promedio de la silueta, sin embargo, en este caso el valor es mayor a 0 pero no muy cercano a 1, esto debido a que posea siluetas negativas tal como se observa en el siguiente grafico. 
+Como se observa, con este algoritmo obtuvimos `r mean(silmg[,3])` de promedio de la silueta, sin embargo, en este caso el valor es mayor a 0 pero no muy cercano a 1, esto debido a que posea siluetas negativas tal como se observa en el siguiente gráfico. 
 </br>
-Graficamente se veria de la siguiente manera.
+Gráficamente se vería de la siguiente manera:
 
 ```{r}
 plot(silmg, cex.names=.4, col=1:3, border = NA)
@@ -212,4 +212,4 @@ p<-ggplot(data=df, aes(x=algoritmo, y=silueta, fill=algoritmo)) +
 p
 ```
 
-Como se observa en la grafica la que obtuvo mejores resultados fue Cluster jerarquico, con un resultado de `r Jerarquico`, podriamos decir que el Agrupamiento Jerarquico fue el mejor, ya que este cuenta con la ventaja de que cualquier medida de distancia puede ser usada, dicho sea de paso, nosotros utilizamos la matriz de distancia, por eso es que hace que se vuelva tan eficiente en comparacion a los otros metodos. 
+Como se observa en la gráfica, la que obtuvo mejores resultados fue Cluster jerárquico, con un resultado de `r Jerarquico`, podríamos decir que el Agrupamiento Jerárquico fue el mejor, ya que este cuenta con la ventaja de que cualquier medida de distancia puede ser usada, dicho sea de paso, nosotros utilizamos la matriz de distancia, por eso es que hace que se vuelva tan eficiente en comparación a los otros métodos.
