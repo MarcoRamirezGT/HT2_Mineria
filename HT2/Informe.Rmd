@@ -1,12 +1,9 @@
 ---
-title: "Informe"
-author: "Marco Ramirez, Alfredo Quezada, Javier Hernández"
+title: "Informe Hoja de trabajo 2"
+author: "Marco Ramirez 195888, Alfredo Quezada, Estuardo Hernandez"
 date: "16/2/2022"
 output: html_document
 ---
-
-# Hoja de Trabajo: 2, Clustering
-### 1. Haga el procesamiento del dataset, explique qué variables no aportan información a la generación de grupos y por qué. Describa con qué variables calculará los grupos.
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -14,11 +11,14 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```
 
-# Librerías a utilizar.
 
+# Hoja de Trabajo: 2, Clustering
+
+### 1. Haga el preprocesamiento del dataset, explique qué variables no aportan información a la generación de grupos y por qué. Describa con qué variables calculará los grupos
 ```{r wid}
 
 library(cluster) #Para calcular la silueta
+library(e1071)#para cmeans
 library(mclust) #mixtures of gaussians
 library(fpc) #para hacer el plotcluster
 library(NbClust) #Para determinar el número de clusters óptimo
@@ -27,35 +27,28 @@ library(hopkins) #Para revisar si vale la pena hacer agrupamiento
 library(GGally) #Para hacer el conjunto de graficos
 library(FeatureImpCluster) #Para revisar la importancia de las variables en los grupos.
 library(pheatmap) #Para hacer mapa de calor
-```
-# Preporcesamiento.
-```{r wid}
+library(ggrepel)
+
+#Preprocesamiento 
 datos<-read.csv("movies.csv")
-```
-# Normalizar los datos.
-```{r wid}
+
 #Normalizar datos
-datos2<-datos[complete.cases(datos),]
-```
-# Variables a usar para el agrupamiento.
-```{r wid}
-#Seleccionar variables a trabajar
-popularidad<-datos2[,'popularity']
-presupuesto<-datos2[,'budget']
-ingresos<-datos2[,'revenue']
-duracion<-datos2[,'runtime']
-conteoVotos<-datos2[,'voteCount']
+
+datos<-datos[complete.cases(read.csv("movies.csv")),]
+popularidad<-datos[,'popularity']
+presupuesto<-datos[,'budget']
+ingresos<-datos[,'revenue']
+duracion<-datos[,'runtime']
+conteoVotos<-datos[,'voteCount']
 cle<-data.frame(popularidad,presupuesto,ingresos,duracion,conteoVotos)
-#cle <- datos[c("popularity","budget","revenue","runtime","voteCount")]
 clusteringVar<-scale(cle)
 
 ```
-# Las variables que no se usaron para el agrupamiento fueron las variables categóricas porque no son las adecuadas para el análisis. Sin embargo se puede analizar pero usando o tomando como base las numéricas. Para establcer relaciones.<br/>
+Las variables que no se usaron para el agrupamiento fueron las variables categóricas porque no son las adecuadas para el análisis. Sin embargo se puede analizar pero usando o tomando como base las numéricas. Para establcer relaciones.<br/>
 
-# Se usaron las siguientes variables:<br/> popularity: Que es el índice de popularidad de la película calculado semanalmente.<br/> budget: El presupuesto para la película.<br/> revenue: El ingreso de la película.<br/> runtime: La duración de la película.<br/> voteCount: El número de votos en la plataforma para la película.<br/> 
+Se usaron las siguientes variables:<br/> popularity: Que es el índice de popularidad de la película calculado semanalmente.<br/> budget: El presupuesto para la película.<br/> revenue: El ingreso de la película.<br/> runtime: La duración de la película.<br/> voteCount: El número de votos en la plataforma para la película.<br/> 
 
-### 2. Analice la tendencia al agrupamiento usando el estadístico de Hopkings y la VAT (Visual Assessment 
-of cluster Tendency) Discuta sus resultados e impresiones. 
+### 2. Analice la tendencia al agrupamiento usando el estadístico de Hopkings y la VAT (Visual Assessment of cluster Tendency) Discuta sus resultados e impresiones. 
 
 ```{r} 
 
@@ -108,7 +101,116 @@ fviz_nbclust(clusteringVar, kmeans, method = "silhouette") +
 ```
 Al igual que el metodo del codo, el numero de clusters ideal es de 3, pero para este metodo, se tomo en cuenta el numero de agrupaciones que tenga una silueta mas elevada. 
 
+### 4. Utilice 3 algoritmos existentes para agrupamiento. Compare los resultados generados por cada uno. 
+#### K-means
+
+K-means es un algoritmo de clasificación no supervisada (clusterización) que agrupa objetos en k grupos basándose en sus características. El agrupamiento se realiza minimizando la suma de distancias entre cada objeto y el centroide de su grupo o cluster. Se suele usar la distancia cuadrática.
+ 
+```{r}
+
+
+km<-kmeans(clusteringVar,3,iter.max =100)
+datos$grupo<-km$cluster
+
+plotcluster(clusteringVar,km$cluster) 
+```
+
+Como se observa en la imagen, el primer paso es escoger el numero de grupos K, en este caso fue 3 tal como se justifico anteriormente, posterior a ello se establecen k centroides en el espacio de datos.
+
+```{r}
+
+fviz_cluster(km, data = clusteringVar,geom = "point", ellipse.type = "norm")
 
 
 
 
+
+```
+
+
+Luego se asignan los centroides y se reubican
+```{r}
+
+silkm<-silhouette(km$cluster,dist(clusteringVar))
+mean(silkm[,3]) 
+Kmean<-mean(silkm[,3]) 
+
+```
+Se obtiene que la silueta de K-means es de `r mean(silkm[,3])` esto indica que tenemos un buen resultado, ya que es muy cercano a 1, siendo un resultado deseable. </br>
+Y el grafico de la silueta de K-means seria la siguiente
+```{r}
+
+plot(silkm, cex.names=.4, col=1:3, border=NA)
+
+```
+
+#### Cluster jerarquico
+El algortimo de clúster jerárquico agrupa los datos basándose en la distancia entre cada uno y buscando que los datos que están dentro de un clúster sean los más similares entre sí.
+
+```{r}
+matriz_dist<- dist(clusteringVar)
+hc<-hclust(datos_dist, method = "ward.D2") #Genera el clustering jerarquico de los datos
+plot(hc, cex=0.5, axes=FALSE) #Genera el dendograma
+rect.hclust(hc,k=3)
+
+groups<-cutree(hc,k=3) #corta el dendograma, determinando el grupo de cada fila
+datos$gruposHC<-groups
+
+
+
+```
+
+
+```{r}
+silhc<-silhouette(groups,datos_dist)
+mean(silhc[,3]) 
+Jerarquico<-mean(silhc[,3]) 
+
+
+```
+
+Como se observa la silueta del algoritmo cluster jerarquico fue de `r mean(silhc[,3])`, indicando que su valor fue muy cercano a 1, siendo un resultado deseable.</br>
+
+Graficamente la silueta de este algoritmo seria de la siguiente manera.
+```{r}
+plot(silhc, cex.names=.4, col=1:3, border = NA)
+```
+
+
+#### Mezcla de gaussiano
+Este algoritmo establece que todos los puntos de datos generados se derivan de una mezcla de distribuciones gaussianas finitas que no tiene parámetros conocidos.
+
+```{r}
+mc<-Mclust(clusteringVar,3)
+
+
+
+datos$mxGau<-mc$classification
+silmg<-silhouette(mc$classification,datos_dist)
+mean(silmg[,3]) 
+Gaussiano<-mean(silmg[,3]) 
+
+```
+Como se observa con este algoritmo obtenimos `r mean(silmg[,3])` de promedio de la silueta, sin embargo, en este caso el valor es mayor a 0 pero no muy cercano a 1, esto debido a que posea siluetas negativas tal como se observa en el siguiente grafico. 
+</br>
+Graficamente se veria de la siguiente manera.
+
+```{r}
+plot(silmg, cex.names=.4, col=1:3, border = NA)
+```
+
+#### 5.Determine la calidad del agrupamiento hecho por cada algoritmo con el método de la silueta. Discuta los resultados. 
+
+```{r}
+df <- data.frame(algoritmo=c("K-mean", "Jerarquico", "Gaussiano"),
+                silueta=c(Kmean, Jerarquico, Gaussiano))
+head(df)
+library(ggplot2)
+
+p<-ggplot(data=df, aes(x=algoritmo, y=silueta, fill=algoritmo)) +
+  geom_bar(stat="identity")
+p
+```
+
+
+Como se observa en la grafica la que obtuvo mejores resultados fue Cluster jerarquico, con un resultado de `r Jerarquico`.
